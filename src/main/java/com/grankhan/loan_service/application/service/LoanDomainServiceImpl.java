@@ -25,9 +25,6 @@ public class LoanDomainServiceImpl implements LoanDomainService {
             throw new IllegalArgumentException("El plazo debe ser mayor que cero");
         }
 
-        // Aquí podrías agregar más reglas (monto máximo, etc.) si quieres.
-        // Pero para la prueba, con estas validaciones y la factory de Loan es suficiente.
-
         return Loan.newPending(user.getId(), amount, termInMonths);
     }
 }

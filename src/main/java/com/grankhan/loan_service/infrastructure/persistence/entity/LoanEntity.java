@@ -33,5 +33,7 @@ public class LoanEntity {
 
     private Instant updatedAt;
 
-    // getters/setters...
+    private Long reviewedByUserId;
+
+    private Instant reviewedAt;
 }

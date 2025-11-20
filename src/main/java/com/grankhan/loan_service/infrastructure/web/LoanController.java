@@ -1,11 +1,14 @@
 package com.grankhan.loan_service.infrastructure.web;
 
+import com.grankhan.loan_service.application.dto.ApproveLoanCommand;
 import com.grankhan.loan_service.application.dto.LoanView;
 import com.grankhan.loan_service.application.dto.RequestLoanCommand;
-import com.grankhan.loan_service.application.dto.ApproveLoanCommand;
 import com.grankhan.loan_service.application.usecase.ApproveLoanUseCase;
+import com.grankhan.loan_service.application.usecase.GetAllLoansUseCase;
 import com.grankhan.loan_service.application.usecase.GetLoansForUserUseCase;
 import com.grankhan.loan_service.application.usecase.RequestLoanUseCase;
+import com.grankhan.loan_service.domain.model.User;
+import com.grankhan.loan_service.domain.port.UserRepositoryPort;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -23,13 +26,19 @@ public class LoanController {
     private final RequestLoanUseCase requestLoanUseCase;
     private final ApproveLoanUseCase approveLoanUseCase;
     private final GetLoansForUserUseCase getLoansForUserUseCase;
+    private final GetAllLoansUseCase getAllLoansUseCase;
+    private final UserRepositoryPort userRepository;
 
     public LoanController(RequestLoanUseCase requestLoanUseCase,
                           ApproveLoanUseCase approveLoanUseCase,
-                          GetLoansForUserUseCase getLoansForUserUseCase) {
+                          GetLoansForUserUseCase getLoansForUserUseCase,
+                          GetAllLoansUseCase getAllLoansUseCase,
+                          UserRepositoryPort userRepository) {
         this.requestLoanUseCase = requestLoanUseCase;
         this.approveLoanUseCase = approveLoanUseCase;
         this.getLoansForUserUseCase = getLoansForUserUseCase;
+        this.getAllLoansUseCase = getAllLoansUseCase;
+        this.userRepository = userRepository;
     }
 
     // 1) Solicitar préstamo (usuario autenticado)
@@ -38,16 +47,16 @@ public class LoanController {
     public Mono<LoanView> requestLoan(@Valid @RequestBody LoanRequestDto body,
                                       Authentication auth) {
 
-        // auth.getName() -> "1", "2", etc. Lo convertimos a Long
-        Long userId = Long.parseLong(auth.getName());
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
 
         RequestLoanCommand command = new RequestLoanCommand(
-                userId,
+                currentUser.getId(),
                 body.amount(),
-                body.termInMonths()
+                body.term()
         );
 
-        // Usas JPA (bloqueante), así que envolvemos el execute(...) en boundedElastic
         return Mono.fromCallable(() -> requestLoanUseCase.execute(command))
                 .subscribeOn(Schedulers.boundedElastic());
     }
@@ -58,11 +67,13 @@ public class LoanController {
                                       @Valid @RequestBody ApproveLoanRequestDto body,
                                       Authentication auth) {
 
-        Long adminId = Long.parseLong(auth.getName());
+        String email = auth.getName();
+        User admin = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
 
         ApproveLoanCommand command = new ApproveLoanCommand(
                 loanId,
-                adminId,
+                admin.getId(),
                 body.approved()
         );
 
@@ -70,15 +81,25 @@ public class LoanController {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-
-    // 3) Listar préstamos del usuario autenticado
+    // 3) Listar préstamos
+    //    - USER: solo sus préstamos
+    //    - ADMIN: todos los préstamos
     @GetMapping
-    public Flux<LoanView> getLoansForCurrentUser(Authentication auth) {
+    public Flux<LoanView> getLoans(Authentication auth) {
 
-        Long userId = Long.parseLong(auth.getName());
+        String email = auth.getName();
+        User currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Usuario autenticado no encontrado"));
 
-        return Mono.fromCallable(() -> getLoansForUserUseCase.execute(userId))
-                .flatMapMany(list -> Flux.fromIterable(list))
+        boolean isAdmin = currentUser.isAdmin();
+
+        Mono<List<LoanView>> source = Mono.fromCallable(() ->
+                        isAdmin
+                                ? getAllLoansUseCase.execute()
+                                : getLoansForUserUseCase.execute(currentUser.getId())
+                )
                 .subscribeOn(Schedulers.boundedElastic());
+
+        return source.flatMapMany(Flux::fromIterable);
     }
 }

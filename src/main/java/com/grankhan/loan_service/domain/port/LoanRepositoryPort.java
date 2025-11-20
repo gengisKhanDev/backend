@@ -12,4 +12,6 @@ public interface LoanRepositoryPort {
     Optional<Loan> findById(Long id);
 
     List<Loan> findByUserId(Long userId);
+
+    List<Loan> findAll();
 }

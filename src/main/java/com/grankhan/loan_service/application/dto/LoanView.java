@@ -6,10 +6,12 @@ import java.time.Instant;
 public record LoanView(
         Long id,
         Long userId,
+        String userName,
+        String userEmail,
         BigDecimal amount,
-        Integer termInMonths,
-        String status,
-        BigDecimal interestRate,
-        Instant createdAt,
-        Instant updatedAt
+        Integer term,         // meses
+        String status,        // "pending", "approved", "rejected"
+        Instant requestDate,  // createdAt
+        Instant reviewDate,   // reviewedAt (puede ser null)
+        String reviewedBy     // nombre del admin (puede ser null)
 ) {}

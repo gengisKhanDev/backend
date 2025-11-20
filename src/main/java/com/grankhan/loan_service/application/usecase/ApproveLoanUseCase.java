@@ -6,6 +6,7 @@ import com.grankhan.loan_service.domain.model.Loan;
 import com.grankhan.loan_service.domain.model.User;
 import com.grankhan.loan_service.domain.port.LoanRepositoryPort;
 import com.grankhan.loan_service.domain.port.UserRepositoryPort;
+import com.grankhan.loan_service.infrastructure.mapper.LoanMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,11 +15,14 @@ public class ApproveLoanUseCase {
 
     private final LoanRepositoryPort loanRepository;
     private final UserRepositoryPort userRepository;
+    private final LoanMapper loanMapper;
 
     public ApproveLoanUseCase(LoanRepositoryPort loanRepository,
-                              UserRepositoryPort userRepository) {
+                              UserRepositoryPort userRepository,
+                              LoanMapper loanMapper) {
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
+        this.loanMapper = loanMapper;
     }
 
     @Transactional
@@ -32,22 +36,16 @@ public class ApproveLoanUseCase {
         Loan loan = loanRepository.findById(cmd.loanId())
                 .orElseThrow(() -> new IllegalArgumentException("Préstamo no encontrado"));
 
+        User borrower = userRepository.findById(loan.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuario del préstamo no encontrado"));
+
         if (cmd.approved()) {
-            loan.approve();
+            loan.approve(admin.getId());
         } else {
-            loan.reject();
+            loan.reject(admin.getId());
         }
 
         Loan saved = loanRepository.save(loan);
-        return new LoanView(
-                saved.getId(),
-                saved.getUserId(),
-                saved.getAmount(),
-                saved.getTermInMonths(),
-                saved.getStatus().name(),
-                saved.getInterestRate(),
-                saved.getCreatedAt(),
-                saved.getUpdatedAt()
-        );
+        return loanMapper.toView(saved, borrower, admin);
     }
 }

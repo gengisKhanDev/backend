@@ -6,39 +6,38 @@ import com.grankhan.loan_service.domain.model.User;
 import com.grankhan.loan_service.domain.port.LoanRepositoryPort;
 import com.grankhan.loan_service.domain.port.UserRepositoryPort;
 import com.grankhan.loan_service.infrastructure.mapper.LoanMapper;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GetLoansForUserUseCase {
+public class GetAllLoansUseCase {
 
     private final LoanRepositoryPort loanRepository;
     private final UserRepositoryPort userRepository;
     private final LoanMapper loanMapper;
 
-    public GetLoansForUserUseCase(LoanRepositoryPort loanRepository,
-                                  UserRepositoryPort userRepository,
-                                  LoanMapper loanMapper) {
+    public GetAllLoansUseCase(LoanRepositoryPort loanRepository,
+                              UserRepositoryPort userRepository,
+                              LoanMapper loanMapper) {
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
         this.loanMapper = loanMapper;
     }
 
-    //@Cacheable(cacheNames = "loansByUser", key = "#userId")
-    public List<LoanView> execute(Long userId) {
-        User borrower = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
-
-        List<Loan> loans = loanRepository.findByUserId(userId);
+    public List<LoanView> execute() {
+        List<Loan> loans = loanRepository.findAll();
 
         return loans.stream()
                 .map(loan -> {
+                    User borrower = userRepository.findById(loan.getUserId())
+                            .orElseThrow(() -> new IllegalArgumentException("Usuario del préstamo no encontrado"));
+
                     User reviewer = null;
                     if (loan.getReviewedByUserId() != null) {
                         reviewer = userRepository.findById(loan.getReviewedByUserId()).orElse(null);
                     }
+
                     return loanMapper.toView(loan, borrower, reviewer);
                 })
                 .toList();

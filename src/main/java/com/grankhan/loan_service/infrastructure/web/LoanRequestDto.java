@@ -7,5 +7,5 @@ import java.math.BigDecimal;
 
 public record LoanRequestDto(
         @NotNull @Min(1) BigDecimal amount,
-        @NotNull @Min(1) Integer termInMonths
+        @NotNull @Min(1) Integer term
 ) {}

@@ -7,6 +7,7 @@ import com.grankhan.loan_service.domain.model.User;
 import com.grankhan.loan_service.domain.port.LoanDomainService;
 import com.grankhan.loan_service.domain.port.LoanRepositoryPort;
 import com.grankhan.loan_service.domain.port.UserRepositoryPort;
+import com.grankhan.loan_service.infrastructure.mapper.LoanMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,13 +17,16 @@ public class RequestLoanUseCase {
     private final LoanRepositoryPort loanRepository;
     private final UserRepositoryPort userRepository;
     private final LoanDomainService loanDomainService;
+    private final LoanMapper loanMapper;
 
     public RequestLoanUseCase(LoanRepositoryPort loanRepository,
                               UserRepositoryPort userRepository,
-                              LoanDomainService loanDomainService) {
+                              LoanDomainService loanDomainService,
+                              LoanMapper loanMapper) {
         this.loanRepository = loanRepository;
         this.userRepository = userRepository;
         this.loanDomainService = loanDomainService;
+        this.loanMapper = loanMapper;
     }
 
     @Transactional
@@ -37,19 +41,6 @@ public class RequestLoanUseCase {
         );
 
         Loan saved = loanRepository.save(loan);
-        return toView(saved);
-    }
-
-    private LoanView toView(Loan loan) {
-        return new LoanView(
-                loan.getId(),
-                loan.getUserId(),
-                loan.getAmount(),
-                loan.getTermInMonths(),
-                loan.getStatus().name(),
-                loan.getInterestRate(),
-                loan.getCreatedAt(),
-                loan.getUpdatedAt()
-        );
+        return loanMapper.toView(saved, user, null);
     }
 }

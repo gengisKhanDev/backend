@@ -38,6 +38,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     private User toDomain(UserEntity e) {
         return new User(
                 e.getId(),
+                e.getName(),
                 e.getEmail(),
                 e.getPasswordHash(),
                 e.getRole()
@@ -47,6 +48,7 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     private UserEntity toEntity(User u) {
         UserEntity e = new UserEntity();
         e.setId(u.getId());
+        e.setName(u.getName());
         e.setEmail(u.getEmail());
         e.setPasswordHash(u.getPasswordHash());
         e.setRole(u.getRole() != null ? u.getRole() : UserRole.USER);

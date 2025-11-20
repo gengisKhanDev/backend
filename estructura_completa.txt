@@ -1,0 +1,163 @@
+.
+├── HELP.md
+├── estructura_completa.txt
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── grankhan
+│   │   │           └── loan_service
+│   │   │               ├── LoanServiceApplication.java
+│   │   │               ├── application
+│   │   │               │   ├── dto
+│   │   │               │   │   ├── ApproveLoanCommand.java
+│   │   │               │   │   ├── LoanView.java
+│   │   │               │   │   └── RequestLoanCommand.java
+│   │   │               │   ├── service
+│   │   │               │   │   └── LoanDomainServiceImpl.java
+│   │   │               │   └── usecase
+│   │   │               │       ├── ApproveLoanUseCase.java
+│   │   │               │       ├── GetLoansForUserUseCase.java
+│   │   │               │       └── RequestLoanUseCase.java
+│   │   │               ├── common
+│   │   │               │   └── exception
+│   │   │               │       ├── ApiException.java
+│   │   │               │       ├── generics
+│   │   │               │       │   ├── BadRequestException.java
+│   │   │               │       │   ├── ConflictException.java
+│   │   │               │       │   ├── ForbiddenException.java
+│   │   │               │       │   ├── InternalServerErrorException.java
+│   │   │               │       │   ├── NotFoundException.java
+│   │   │               │       │   └── UnauthorizedException.java
+│   │   │               │       ├── handler
+│   │   │               │       │   └── GlobalExceptionHandler.java
+│   │   │               │       ├── model
+│   │   │               │       │   └── ErrorResponse.java
+│   │   │               │       └── specific
+│   │   │               │           ├── InvalidTokenException.java
+│   │   │               │           ├── ResourceNotFoundException.java
+│   │   │               │           └── UsernameAlreadyExistsException.java
+│   │   │               ├── domain
+│   │   │               │   ├── model
+│   │   │               │   │   ├── Loan.java
+│   │   │               │   │   ├── LoanStatus.java
+│   │   │               │   │   ├── User.java
+│   │   │               │   │   └── UserRole.java
+│   │   │               │   └── port
+│   │   │               │       ├── LoanDomainService.java
+│   │   │               │       ├── LoanRepositoryPort.java
+│   │   │               │       └── UserRepositoryPort.java
+│   │   │               └── infrastructure
+│   │   │                   ├── config
+│   │   │                   │   ├── CacheConfig.java
+│   │   │                   │   ├── OpenApiConfig.java
+│   │   │                   │   └── WebFluxConfig.java
+│   │   │                   ├── mapper
+│   │   │                   │   └── LoanMapper.java
+│   │   │                   ├── persistence
+│   │   │                   │   ├── adapter
+│   │   │                   │   │   ├── LoanRepositoryAdapter.java
+│   │   │                   │   │   └── UserRepositoryAdapter.java
+│   │   │                   │   ├── entity
+│   │   │                   │   │   ├── LoanEntity.java
+│   │   │                   │   │   └── UserEntity.java
+│   │   │                   │   └── repository
+│   │   │                   │       ├── LoanJpaRepository.java
+│   │   │                   │       └── UserJpaRepository.java
+│   │   │                   ├── security
+│   │   │                   │   └── SecurityConfig.java
+│   │   │                   └── web
+│   │   │                       ├── ApproveLoanRequestDto.java
+│   │   │                       ├── LoanController.java
+│   │   │                       └── LoanRequestDto.java
+│   │   └── resources
+│   │       └── application.properties
+│   └── test
+│       └── java
+│           └── com
+│               └── grankhan
+│                   └── loan_service
+│                       └── LoanServiceApplicationTests.java
+└── target
+    ├── classes
+    │   ├── application.properties
+    │   └── com
+    │       └── grankhan
+    │           └── loan_service
+    │               ├── LoanServiceApplication.class
+    │               ├── application
+    │               │   ├── dto
+    │               │   │   ├── ApproveLoanCommand.class
+    │               │   │   ├── LoanView.class
+    │               │   │   └── RequestLoanCommand.class
+    │               │   ├── service
+    │               │   │   └── LoanDomainServiceImpl.class
+    │               │   └── usecase
+    │               │       ├── ApproveLoanUseCase.class
+    │               │       ├── GetLoansForUserUseCase.class
+    │               │       └── RequestLoanUseCase.class
+    │               ├── common
+    │               │   └── exception
+    │               │       ├── ApiException.class
+    │               │       ├── generics
+    │               │       │   ├── BadRequestException.class
+    │               │       │   ├── ConflictException.class
+    │               │       │   ├── ForbiddenException.class
+    │               │       │   ├── InternalServerErrorException.class
+    │               │       │   ├── NotFoundException.class
+    │               │       │   └── UnauthorizedException.class
+    │               │       ├── handler
+    │               │       │   └── GlobalExceptionHandler.class
+    │               │       ├── model
+    │               │       │   └── ErrorResponse.class
+    │               │       └── specific
+    │               │           ├── InvalidTokenException.class
+    │               │           ├── ResourceNotFoundException.class
+    │               │           └── UsernameAlreadyExistsException.class
+    │               ├── domain
+    │               │   ├── model
+    │               │   │   ├── Loan.class
+    │               │   │   ├── LoanStatus.class
+    │               │   │   ├── User.class
+    │               │   │   └── UserRole.class
+    │               │   └── port
+    │               │       ├── LoanDomainService.class
+    │               │       ├── LoanRepositoryPort.class
+    │               │       └── UserRepositoryPort.class
+    │               └── infrastructure
+    │                   ├── config
+    │                   │   ├── CacheConfig.class
+    │                   │   ├── OpenApiConfig.class
+    │                   │   └── WebFluxConfig.class
+    │                   ├── mapper
+    │                   │   └── LoanMapper.class
+    │                   ├── persistence
+    │                   │   ├── adapter
+    │                   │   │   ├── LoanRepositoryAdapter.class
+    │                   │   │   └── UserRepositoryAdapter.class
+    │                   │   ├── entity
+    │                   │   │   ├── LoanEntity.class
+    │                   │   │   └── UserEntity.class
+    │                   │   └── repository
+    │                   │       ├── LoanJpaRepository.class
+    │                   │       └── UserJpaRepository.class
+    │                   ├── security
+    │                   │   └── SecurityConfig.class
+    │                   └── web
+    │                       ├── ApproveLoanRequestDto.class
+    │                       ├── LoanController.class
+    │                       └── LoanRequestDto.class
+    ├── generated-sources
+    │   └── annotations
+    ├── generated-test-sources
+    │   └── test-annotations
+    └── test-classes
+        └── com
+            └── grankhan
+                └── loan_service
+                    └── LoanServiceApplicationTests.class
+
+70 directories, 91 files

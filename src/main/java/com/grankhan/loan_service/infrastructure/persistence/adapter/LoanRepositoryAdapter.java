@@ -1,7 +1,6 @@
 package com.grankhan.loan_service.infrastructure.persistence.adapter;
 
 import com.grankhan.loan_service.domain.model.Loan;
-import com.grankhan.loan_service.domain.model.LoanStatus;
 import com.grankhan.loan_service.domain.port.LoanRepositoryPort;
 import com.grankhan.loan_service.infrastructure.persistence.entity.LoanEntity;
 import com.grankhan.loan_service.infrastructure.persistence.repository.LoanJpaRepository;
@@ -39,6 +38,14 @@ public class LoanRepositoryAdapter implements LoanRepositoryPort {
                 .toList();
     }
 
+    @Override
+    public List<Loan> findAll() {
+        return loanJpaRepository.findAll()
+                .stream()
+                .map(this::toDomain)
+                .toList();
+    }
+
     private LoanEntity toEntity(Loan loan) {
         LoanEntity e = new LoanEntity();
         e.setId(loan.getId());
@@ -49,6 +56,8 @@ public class LoanRepositoryAdapter implements LoanRepositoryPort {
         e.setInterestRate(loan.getInterestRate());
         e.setCreatedAt(loan.getCreatedAt());
         e.setUpdatedAt(loan.getUpdatedAt());
+        e.setReviewedByUserId(loan.getReviewedByUserId());
+        e.setReviewedAt(loan.getReviewedAt());
         return e;
     }
 
@@ -61,7 +70,9 @@ public class LoanRepositoryAdapter implements LoanRepositoryPort {
                 e.getStatus(),
                 e.getInterestRate(),
                 e.getCreatedAt(),
-                e.getUpdatedAt()
+                e.getUpdatedAt(),
+                e.getReviewedByUserId(),
+                e.getReviewedAt()
         );
     }
 }

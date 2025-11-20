@@ -8,12 +8,18 @@ import lombok.Setter;
 public class User {
 
     private Long id;
+    private String name;
     private String email;
     private String passwordHash;
     private UserRole role;
 
-    public User(Long id, String email, String passwordHash, UserRole role) {
+    public User(Long id,
+                String name,
+                String email,
+                String passwordHash,
+                UserRole role) {
         this.id = id;
+        this.name = name;
         this.email = email;
         this.passwordHash = passwordHash;
         this.role = role;

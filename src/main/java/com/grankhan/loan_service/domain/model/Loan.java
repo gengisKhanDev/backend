@@ -19,6 +19,10 @@ public class Loan {
     private Instant createdAt;
     private Instant updatedAt;
 
+    // NUEVOS CAMPOS
+    private Long reviewedByUserId;
+    private Instant reviewedAt;
+
     public Loan(Long id,
                 Long userId,
                 BigDecimal amount,
@@ -26,7 +30,9 @@ public class Loan {
                 LoanStatus status,
                 BigDecimal interestRate,
                 Instant createdAt,
-                Instant updatedAt) {
+                Instant updatedAt,
+                Long reviewedByUserId,
+                Instant reviewedAt) {
         this.id = id;
         this.userId = userId;
         this.amount = amount;
@@ -35,6 +41,8 @@ public class Loan {
         this.interestRate = interestRate;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.reviewedByUserId = reviewedByUserId;
+        this.reviewedAt = reviewedAt;
     }
 
     public static Loan newPending(Long userId, BigDecimal amount, Integer termInMonths) {
@@ -48,24 +56,31 @@ public class Loan {
                 LoanStatus.PENDING,
                 defaultInterest,
                 now,
-                now
+                now,
+                null,
+                null
         );
     }
 
-    public void approve() {
+    public void approve(Long adminUserId) {
         if (status != LoanStatus.PENDING) {
             throw new IllegalStateException("Solo se puede aprobar un préstamo pendiente");
         }
+        Instant now = Instant.now();
         this.status = LoanStatus.APPROVED;
-        this.updatedAt = Instant.now();
+        this.reviewedByUserId = adminUserId;
+        this.reviewedAt = now;
+        this.updatedAt = now;
     }
 
-    public void reject() {
+    public void reject(Long adminUserId) {
         if (status != LoanStatus.PENDING) {
             throw new IllegalStateException("Solo se puede rechazar un préstamo pendiente");
         }
+        Instant now = Instant.now();
         this.status = LoanStatus.REJECTED;
-        this.updatedAt = Instant.now();
+        this.reviewedByUserId = adminUserId;
+        this.reviewedAt = now;
+        this.updatedAt = now;
     }
-
 }

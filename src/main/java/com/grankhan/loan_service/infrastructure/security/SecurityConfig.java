@@ -23,13 +23,12 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchange -> exchange
-                        // Swagger / OpenAPI
                         .pathMatchers(
                                 "/swagger-ui.html",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**"
+                                "/v3/api-docs/**",
+                                "/h2-console/**"
                         ).permitAll()
-                         .pathMatchers("/h2-console/**").permitAll()
                         .anyExchange().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())
@@ -39,15 +38,13 @@ public class SecurityConfig {
 
     @Bean
     public MapReactiveUserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        // User con id "1"
-        UserDetails user = User.withUsername("1")
-                .password(passwordEncoder.encode("user123"))
+        UserDetails user = User.withUsername("usuario@test.com")
+                .password(passwordEncoder.encode("123"))
                 .roles("USER")
                 .build();
 
-        // Admin con id "99"
-        UserDetails admin = User.withUsername("99")
-                .password(passwordEncoder.encode("admin123"))
+        UserDetails admin = User.withUsername("admin@test.com")
+                .password(passwordEncoder.encode("123"))
                 .roles("ADMIN")
                 .build();
 
